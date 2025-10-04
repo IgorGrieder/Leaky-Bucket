@@ -2,20 +2,32 @@ package database
 
 import (
 	"fmt"
+	"os"
 
-	"github.com/redis/go-redis/v9"
+	"database/sql"
+
+	_ "github.com/lib/pq"
 )
 
-func SetupPG() *redis.Client {
-	const REDIS_ADDR = "redis"
-	const REDIS_PORT = 6379
+func SetupPG() *sql.DB {
 
-	redisClient := redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s:%d", REDIS_ADDR, REDIS_PORT),
-		Password: "",
-		DB:       0,
-		Protocol: 2,
-	})
+	const (
+		host     = "localhost"
+		port     = 5432
+		user     = "postgres"
+		password = "none"
+		dbname   = "leaky-bucket"
+	)
 
-	return redisClient
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		fmt.Printf("Ending the execution %v", err)
+		os.Exit(1)
+	}
+
+	return db
 }
