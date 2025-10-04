@@ -1,10 +1,16 @@
 package main
 
 import (
-	"context"
 	"fmt"
+
+	"github.com/IgorGrieder/Leaky-Bucket/internal/database"
 )
 
 func main() {
-	fmt.Println("Hiii")
+	fmt.Println("Starting the program")
+
+	database.StartConns()
+
+	fmt.Println("Connections stablished")
+
 }
