@@ -1,6 +1,8 @@
 # My implementation
 
 Because I want I will make this same code challenge but using go for it.
+The idea will be to have a pg mock database with some values to be consulted, given an user, and creating a test file
+to provided a proper execution of it.
 
 ## Stack
 
