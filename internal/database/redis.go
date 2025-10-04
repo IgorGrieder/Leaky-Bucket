@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/IgorGrieder/Leaky-Bucket/internal/config"
 	"github.com/redis/go-redis/v9"
 )
 
-func SetupRedis() *redis.Client {
+func SetupRedis(cfg *config.Config) *redis.Client {
 	const REDIS_ADDR = "redis"
 	const REDIS_PORT = 6379
 

@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+
+	"github.com/IgorGrieder/Leaky-Bucket/internal/config"
 )
 
-func StartHttpServer() {
+func StartHttpServer(cfg *config.Config) {
 
 	mux := http.NewServeMux()
 

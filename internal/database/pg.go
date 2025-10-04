@@ -6,10 +6,11 @@ import (
 
 	"database/sql"
 
+	"github.com/IgorGrieder/Leaky-Bucket/internal/config"
 	_ "github.com/lib/pq"
 )
 
-func SetupPG() *sql.DB {
+func SetupPG(cfg *config.Config) *sql.DB {
 
 	const (
 		host     = "localhost"
