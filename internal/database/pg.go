@@ -12,17 +12,9 @@ import (
 
 func SetupPG(cfg *config.Config) *sql.DB {
 
-	const (
-		host     = "localhost"
-		port     = 5432
-		user     = "postgres"
-		password = "none"
-		dbname   = "leaky-bucket"
-	)
-
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
+		cfg.HOST, cfg.PORT_PG, cfg.USER, cfg.PG_PASS, cfg.DB_NAME)
 
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
