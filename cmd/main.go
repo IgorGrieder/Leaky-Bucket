@@ -21,10 +21,10 @@ func main() {
 
 	fmt.Println("Starting the program")
 
-	database.StartConns(cfg)
+	connections := database.StartConns(cfg)
 
 	fmt.Println("Connections stablished")
 
-	presentation.StartHttpServer(cfg)
+	presentation.StartHttpServer(cfg, connections)
 
 }

@@ -7,6 +7,14 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-func StartConns(cfg *config.Config) (*redis.Client, *sql.DB) {
-	return SetupRedis(cfg), SetupPG(cfg)
+type Connections struct {
+	Redis *redis.Client
+	PG    *sql.DB
+}
+
+func StartConns(cfg *config.Config) *Connections {
+	return &Connections{
+		Redis: SetupRedis(cfg),
+		PG:    SetupPG(cfg),
+	}
 }

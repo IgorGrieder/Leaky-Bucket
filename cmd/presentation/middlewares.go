@@ -10,7 +10,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func AuthMiddleware(next func(w http.ResponseWriter, r *http.Request, ctx context.Context), cfg *config.Config) http.HandlerFunc {
+func AuthMiddleware(next http.HandlerFunc, cfg *config.Config) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		tokenString := r.Header.Get("Authorization")
@@ -45,6 +45,6 @@ func AuthMiddleware(next func(w http.ResponseWriter, r *http.Request, ctx contex
 		}
 
 		ctx := context.WithValue(r.Context(), "JWT", token)
-		next(w, r, ctx)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
