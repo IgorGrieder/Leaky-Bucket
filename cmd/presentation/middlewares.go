@@ -2,12 +2,11 @@ package presentation
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"strings"
 
+	"github.com/IgorGrieder/Leaky-Bucket/internal/auth"
 	"github.com/IgorGrieder/Leaky-Bucket/internal/config"
-	"github.com/golang-jwt/jwt/v5"
 )
 
 func AuthMiddleware(next http.HandlerFunc, cfg *config.Config) http.HandlerFunc {
@@ -15,36 +14,23 @@ func AuthMiddleware(next http.HandlerFunc, cfg *config.Config) http.HandlerFunc 
 
 		tokenString := r.Header.Get("Authorization")
 		if tokenString == "" {
-			w.WriteHeader(http.StatusUnauthorized)
-			fmt.Fprint(w, "Missing authorization header")
+			http.Error(w, "Missing authorization header", http.StatusUnauthorized)
 			return
 		}
 
-		tokenStringTreated := strings.TrimPrefix(tokenString, "Bearer ")
-		if tokenStringTreated == tokenString {
+		token := strings.TrimPrefix(tokenString, "Bearer ")
+		if token == tokenString {
 			http.Error(w, "Invalid authorization header format", http.StatusUnauthorized)
 			return
 		}
+		tokenParsed, err := auth.Authenticate(token, cfg.HASH)
 
-		token, err := jwt.Parse(tokenStringTreated, func(token *jwt.Token) (any, error) {
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-			}
-
-			return cfg.HASH, nil
-		})
-
-		if err != nil {
-			http.Error(w, "Invalid authorization header format", http.StatusUnauthorized)
+		if err != nil || !tokenParsed.Valid {
+			http.Error(w, "Invalid token", http.StatusUnauthorized)
 			return
 		}
 
-		if !token.Valid {
-			http.Error(w, "Expired token", http.StatusUnauthorized)
-			return
-		}
-
-		ctx := context.WithValue(r.Context(), "JWT", token)
+		ctx := context.WithValue(r.Context(), "JWT", tokenParsed)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
