@@ -14,6 +14,7 @@ type Config struct {
 	USER       string
 	DB_NAME    string
 	PG_PASS    string
+	HASH       string
 }
 
 func NewConfig() *Config {
@@ -25,6 +26,7 @@ func NewConfig() *Config {
 	user := getEnv("PG_USER", "postgres")
 	dbname := getEnv("PG_DB", "leaky-bucket")
 	pgPass := getEnv("PG_PASS", "none")
+	hash := getEnv("HASH", "none")
 
 	return &Config{
 		PORT:       port,
@@ -35,6 +37,7 @@ func NewConfig() *Config {
 		USER:       user,
 		DB_NAME:    dbname,
 		PG_PASS:    pgPass,
+		HASH:       hash,
 	}
 }
 
