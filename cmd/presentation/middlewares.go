@@ -12,6 +12,7 @@ import (
 
 func AuthMiddleware(next func(w http.ResponseWriter, r *http.Request, ctx context.Context), cfg *config.Config) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
 		tokenString := r.Header.Get("Authorization")
 		if tokenString == "" {
 			w.WriteHeader(http.StatusUnauthorized)
