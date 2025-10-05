@@ -35,6 +35,9 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+    environment: 
+      - HASH=733e6f1d9d33bd2e754da2ba56aeb563718fc68f5c139f527e96a13a1b2671fb
+
 
 volumes:
   redis_data_leaky_bucket:
