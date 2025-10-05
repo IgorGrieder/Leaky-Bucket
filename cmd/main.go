@@ -8,6 +8,7 @@ import (
 	"github.com/IgorGrieder/Leaky-Bucket/internal/application"
 	"github.com/IgorGrieder/Leaky-Bucket/internal/config"
 	"github.com/IgorGrieder/Leaky-Bucket/internal/database"
+	"github.com/IgorGrieder/Leaky-Bucket/internal/repository"
 	"github.com/joho/godotenv"
 )
 
@@ -23,9 +24,16 @@ func main() {
 	fmt.Println("Starting the program")
 
 	connections := database.StartConns(cfg)
-	gatewayService := &application.ProcessorService{}
 
-	fmt.Println("Connections stablished")
+	LimitingRepository := repository.NewLimitingRepository(connections.Redis)
+	MutationRepository := repository.NewMutationRepository(connections.PG)
+
+	gatewayService := &application.ProcessorService{
+		MutationRepository: MutationRepository,
+		LimitingRepository: LimitingRepository,
+	}
+
+	fmt.Println("Root layer stablished, starting the http server")
 
 	presentation.StartHttpServer(cfg, gatewayService)
 }
