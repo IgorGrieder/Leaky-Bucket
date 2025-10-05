@@ -26,5 +26,4 @@ func main() {
 	fmt.Println("Connections stablished")
 
 	presentation.StartHttpServer(cfg, connections)
-
 }
