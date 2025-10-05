@@ -13,7 +13,7 @@ func StartHttpServer(cfg *config.Config, connections *database.Connections) {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("POST /mutation", AuthMiddleware(HandleMutation, cfg))
+	mux.HandleFunc("POST /mutation", AuthMiddleware(MutationHandler, cfg))
 
 	svr := &http.Server{Addr: fmt.Sprintf(":%d", cfg.PORT), Handler: mux}
 

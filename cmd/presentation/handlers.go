@@ -4,6 +4,6 @@ import (
 	"net/http"
 )
 
-func HandleMutation(w http.ResponseWriter, r *http.Request) {
+func MutationHandler(w http.ResponseWriter, r *http.Request) {
 	//DO SOMETHING
 }

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/IgorGrieder/Leaky-Bucket/internal/auth"
+	auth "github.com/IgorGrieder/Leaky-Bucket/internal/application"
 	"github.com/IgorGrieder/Leaky-Bucket/internal/config"
 )
 
@@ -18,7 +18,7 @@ func AuthMiddleware(next http.HandlerFunc, cfg *config.Config) http.HandlerFunc 
 			return
 		}
 
-		token := strings.TrimPrefix(tokenString, "Bearer ")
+		token := trimBearerPrefix(tokenString)
 		if token == tokenString {
 			http.Error(w, "Invalid authorization header format", http.StatusUnauthorized)
 			return
@@ -33,4 +33,8 @@ func AuthMiddleware(next http.HandlerFunc, cfg *config.Config) http.HandlerFunc 
 		ctx := context.WithValue(r.Context(), "JWT", tokenParsed)
 		next(w, r.WithContext(ctx))
 	})
+}
+
+func trimBearerPrefix(token string) string {
+	return strings.TrimPrefix(token, "Bearer ")
 }
