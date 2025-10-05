@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	auth "github.com/IgorGrieder/Leaky-Bucket/internal/application"
+	"github.com/IgorGrieder/Leaky-Bucket/internal/application"
 	"github.com/IgorGrieder/Leaky-Bucket/internal/config"
 )
 
@@ -24,7 +24,7 @@ func AuthMiddleware(next http.HandlerFunc, cfg *config.Config) http.HandlerFunc 
 			return
 		}
 
-		tokenParsed, err := auth.Authenticate(token, cfg.HASH)
+		tokenParsed, err := application.Authenticate(token, cfg.HASH)
 		if err != nil || !tokenParsed.Valid {
 			http.Error(w, "Invalid token", http.StatusUnauthorized)
 			return
