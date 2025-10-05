@@ -23,7 +23,7 @@ func main() {
 	fmt.Println("Starting the program")
 
 	connections := database.StartConns(cfg)
-	gatewayService := application.ProcessorService{}
+	gatewayService := &application.ProcessorService{}
 
 	fmt.Println("Connections stablished")
 
