@@ -9,6 +9,6 @@ import (
 type ProcessorService struct {
 }
 
-func ProcessMutation(mutation domain.Mutation, ctx *context.Context) error {
+func (p *ProcessorService) ProcessMutation(mutation domain.Mutation, ctx context.Context) error {
 	return nil
 }
