@@ -28,7 +28,6 @@ func Authenticate(tokenString string, hashSecret string) (*jwt.Token, error) {
 }
 
 func GenerateToken(userID, pix string, secretKey []byte) (string, error) {
-	// Create the claims
 	claims := &JWT{
 		UserID: userID,
 		PIX:    pix,

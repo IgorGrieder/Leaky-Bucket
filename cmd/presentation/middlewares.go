@@ -23,14 +23,14 @@ func AuthMiddleware(next http.HandlerFunc, cfg *config.Config) http.HandlerFunc 
 			http.Error(w, "Invalid authorization header format", http.StatusUnauthorized)
 			return
 		}
-		tokenParsed, err := auth.Authenticate(token, cfg.HASH)
 
+		tokenParsed, err := auth.Authenticate(token, cfg.HASH)
 		if err != nil || !tokenParsed.Valid {
 			http.Error(w, "Invalid token", http.StatusUnauthorized)
 			return
 		}
 
 		ctx := context.WithValue(r.Context(), "JWT", tokenParsed)
-		next.ServeHTTP(w, r.WithContext(ctx))
+		next(w, r.WithContext(ctx))
 	})
 }
