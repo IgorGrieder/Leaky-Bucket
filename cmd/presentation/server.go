@@ -5,15 +5,15 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/IgorGrieder/Leaky-Bucket/internal/application"
 	"github.com/IgorGrieder/Leaky-Bucket/internal/config"
-	"github.com/IgorGrieder/Leaky-Bucket/internal/database"
 )
 
-func StartHttpServer(cfg *config.Config, connections *database.Connections) {
+func StartHttpServer(cfg *config.Config, gatewayService *application.ProcessorService) {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("POST /mutation", AuthMiddleware(MutationHandler, cfg))
+	mux.HandleFunc("POST /mutation", AuthMiddleware(NewMutationHandler(gatewayService), cfg))
 
 	svr := &http.Server{Addr: fmt.Sprintf(":%d", cfg.PORT), Handler: mux}
 
