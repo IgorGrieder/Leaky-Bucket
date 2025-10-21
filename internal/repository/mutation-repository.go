@@ -30,7 +30,7 @@ func (repository *MutationRepository) QueryPixKey(mutation domain.Mutation, ctx 
 		var mutation domain.MutationEntity
 
 		if err := rows.Scan(&mutation.Key); err != nil {
-			continue
+			return nil, err
 		}
 
 		entities = append(entities, mutation)
