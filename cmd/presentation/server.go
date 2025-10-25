@@ -9,7 +9,7 @@ import (
 	"github.com/IgorGrieder/Leaky-Bucket/internal/config"
 )
 
-func StartHttpServer(cfg *config.Config, gatewayService *application.ProcessorService) {
+func StartHttpServer(cfg *config.Config, gatewayService application.ProcessorService) {
 
 	mux := http.NewServeMux()
 

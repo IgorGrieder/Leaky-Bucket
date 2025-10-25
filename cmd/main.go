@@ -24,7 +24,7 @@ func main() {
 	MutationRepository := repository.NewMutationRepository(connections.PG)
 
 	// Services
-	gatewayService := &application.ProcessorService{
+	gatewayService := application.ProcessorService{
 		MutationRepository: MutationRepository,
 		LimitingRepository: LimitingRepository,
 	}
