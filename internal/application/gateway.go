@@ -12,6 +12,6 @@ type ProcessorService struct {
 	MutationRepository *repository.MutationRepository
 }
 
-func (p *ProcessorService) ProcessMutation(mutation domain.Mutation, ctx context.Context) error {
-	return nil
+func (p *ProcessorService) ProcessMutation(mutation domain.Mutation, ctx context.Context) (domain.Mutation, error) {
+	return domain.Mutation{PIX_KEY: "Hello"}, nil
 }
