@@ -14,6 +14,7 @@ func StartHttpServer(cfg *config.Config, gatewayService application.ProcessorSer
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("POST /mutation", AuthMiddleware(NewMutationHandler(gatewayService), cfg))
+	mux.HandleFunc("POST /generateJWT", Authenticate)
 
 	svr := &http.Server{Addr: fmt.Sprintf(":%d", cfg.PORT), Handler: mux}
 
