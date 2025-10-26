@@ -42,3 +42,7 @@ func NewMutationHandler(service application.ProcessorService) http.HandlerFunc {
 		w.Write(returnJson)
 	}
 }
+
+func Authenticate(w http.ResponseWriter, r *http.Request) {
+
+}
