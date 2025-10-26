@@ -33,7 +33,7 @@ func GenerateToken(userID, pix string, secretKey []byte) (string, error) {
 		PIX:    pix,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   userID,
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(1 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
@@ -41,5 +41,9 @@ func GenerateToken(userID, pix string, secretKey []byte) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	signedToken, err := token.SignedString(secretKey)
-	return signedToken, err
+	if err != nil {
+		return "", fmt.Errorf("Error while signing the JWT token: %v", err)
+	}
+
+	return signedToken, nil
 }
