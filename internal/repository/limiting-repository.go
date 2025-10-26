@@ -18,7 +18,7 @@ func NewLimitingRepository(redis *redis.Client) *LimitingRepository {
 	return &LimitingRepository{Redis: redis, MAX_ATTEMPTS: 10}
 }
 
-func (r *LimitingRepository) QueryTokens(ctx context.Context, key string) (int32, error) {
+func (r *LimitingRepository) QueryToken(ctx context.Context, key string) (int32, error) {
 	ctxRedis, cancel := context.WithTimeout(ctx, 1*time.Second)
 	defer cancel()
 
@@ -27,7 +27,7 @@ func (r *LimitingRepository) QueryTokens(ctx context.Context, key string) (int32
 	if err != nil {
 
 		if errors.Is(err, redis.Nil) {
-			newValue, err := r.CreateToken(ctxRedis, key)
+			newValue, err := r.CreateToken(ctx, key)
 			return newValue, err
 		}
 
@@ -51,7 +51,7 @@ func (r *LimitingRepository) CreateToken(ctx context.Context, key string) (int32
 	return attemptsLeft, nil
 }
 
-func (r *LimitingRepository) DecrementBucket(ctx context.Context, key string) error {
+func (r *LimitingRepository) DecrementToken(ctx context.Context, key string) error {
 	ctxRedis, cancel := context.WithTimeout(ctx, 1*time.Second)
 	defer cancel()
 
