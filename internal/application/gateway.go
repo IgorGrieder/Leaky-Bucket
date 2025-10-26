@@ -25,13 +25,5 @@ func (p *ProcessorService) ProcessMutation(mutation domain.Mutation, ctx context
 		return nil, err
 	}
 
-	var response []domain.Mutation
-	for _, entity := range entities {
-		mappedMutation := domain.Mutation{
-			PIX_KEY: entity.Key,
-		}
-		response = append(response, mappedMutation)
-	}
-
-	return response, nil
+	return ToMutationAPISlice(entities), nil
 }
