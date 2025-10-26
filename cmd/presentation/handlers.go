@@ -16,6 +16,11 @@ func NewMutationHandler(service application.ProcessorService) http.HandlerFunc {
 			return
 		}
 
+		if len(request.PIX_KEY) == 0 {
+			http.Error(w, "Invalid request object", http.StatusBadRequest)
+			return
+		}
+
 		// If we get an error we must return a error code
 		pix_key, err := service.ProcessMutation(request, r.Context())
 		if err != nil {
