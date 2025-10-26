@@ -21,14 +21,18 @@ func NewMutationHandler(service application.ProcessorService) http.HandlerFunc {
 			return
 		}
 
-		// If we get an error we must return a error code
-		pix_key, err := service.ProcessMutation(request, r.Context())
+		pix_keys, err := service.ProcessMutation(request, r.Context())
 		if err != nil {
 			http.Error(w, "An error occured", http.StatusInternalServerError)
 			return
 		}
 
-		returnJson, err := json.Marshal(pix_key)
+		if len(pix_keys) == 0 {
+			http.Error(w, "No matches found for the request key", http.StatusNotFound)
+			return
+		}
+
+		returnJson, err := json.Marshal(pix_keys)
 		if err != nil {
 			http.Error(w, "Failed to create JSON response", http.StatusInternalServerError)
 			return

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log"
 
 	"github.com/IgorGrieder/Leaky-Bucket/internal/domain"
 	"github.com/IgorGrieder/Leaky-Bucket/internal/repository"
@@ -18,6 +19,8 @@ func (p *ProcessorService) ProcessMutation(mutation domain.Mutation, ctx context
 	entities, err := p.MutationRepository.QueryPixKey(mutation.PIX_KEY, ctx)
 
 	if err != nil {
+		log.Printf("Error fetching pix keys check: %v", err)
+
 		if errors.Is(err, sql.ErrNoRows) {
 			return []domain.Mutation{}, nil
 		}
