@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/IgorGrieder/Leaky-Bucket/internal/domain"
+	"github.com/IgorGrieder/Leaky-Bucket/internal/database"
 )
 
 type MutationRepository struct {
@@ -17,18 +17,20 @@ func NewMutationRepository(pg *sql.DB) *MutationRepository {
 	return &MutationRepository{Postgress: pg}
 }
 
-func (repository *MutationRepository) QueryPixKey(mutation string, ctx context.Context) ([]domain.MutationEntity, error) {
+func (repository *MutationRepository) QueryPixKey(mutation string, ctx context.Context) ([]database.MutationEntity, error) {
 	ctxDb, cancel := context.WithTimeout(ctx, time.Second*1)
 	defer cancel()
 
-	var entities []domain.MutationEntity
-	rows, err := repository.Postgress.QueryContext(ctxDb, "SELECT pix_key FROM USERS WHERE $1", mutation)
+	const query = "SELECT pix_key FROM USERS WHERE $1"
+
+	var entities []database.MutationEntity
+	rows, err := repository.Postgress.QueryContext(ctxDb, query, mutation)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Error executing the query %s in the database: %v", query, err)
 	}
 
 	for rows.Next() {
-		var mutation domain.MutationEntity
+		var mutation database.MutationEntity
 
 		if err := rows.Scan(&mutation.Key); err != nil {
 			return nil, fmt.Errorf("Error while scaning postgres row: %v", err)
