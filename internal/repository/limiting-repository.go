@@ -51,14 +51,14 @@ func (r *LimitingRepository) CreateToken(ctx context.Context, key string) (int32
 	return attemptsLeft, nil
 }
 
-func (r *LimitingRepository) DecrementToken(ctx context.Context, key string) error {
+func (r *LimitingRepository) DecrementToken(ctx context.Context, key string) (int64, error) {
 	ctxRedis, cancel := context.WithTimeout(ctx, 1*time.Second)
 	defer cancel()
 
-	_, err := r.Redis.Decr(ctxRedis, key).Result()
+	val, err := r.Redis.Decr(ctxRedis, key).Result()
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	return val, nil
 }

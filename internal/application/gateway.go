@@ -22,7 +22,7 @@ func (p *ProcessorService) ProcessMutation(mutation domain.Mutation, ctx context
 		log.Printf("Error fetching pix keys check: %v", err)
 
 		if errors.Is(err, sql.ErrNoRows) {
-			p.LimitingRepository.DecrementToken(ctx)
+			p.LimitingRepository.DecrementToken(ctx, "olaa")
 			return []domain.Mutation{}, nil
 		}
 
