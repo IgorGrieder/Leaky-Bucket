@@ -26,25 +26,25 @@ func (repository *MutationRepository) QueryPixKey(mutation string, ctx context.C
 	var entities []database.MutationEntity
 	rows, err := repository.Postgress.QueryContext(ctxDb, query, mutation)
 	if err != nil {
-		return nil, fmt.Errorf("Error executing the query %s in the database: %v", query, err)
+		return nil, fmt.Errorf("error executing the query %s in the database: %v", query, err)
 	}
 
 	for rows.Next() {
 		var mutation database.MutationEntity
 
 		if err := rows.Scan(&mutation.Key); err != nil {
-			return nil, fmt.Errorf("Error while scaning postgres row: %v", err)
+			return nil, fmt.Errorf("error while scaning postgres row: %v", err)
 		}
 
 		entities = append(entities, mutation)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("Error while iterating over query result: %v", err)
+		return nil, fmt.Errorf("error while iterating over query result: %v", err)
 	}
 
 	if len(entities) == 0 {
-		return nil, fmt.Errorf("No PIX key related to the user: %w", sql.ErrNoRows)
+		return nil, fmt.Errorf("no PIX key related to the user: %w", sql.ErrNoRows)
 	}
 
 	return entities, nil

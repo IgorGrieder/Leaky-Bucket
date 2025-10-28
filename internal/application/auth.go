@@ -42,7 +42,7 @@ func GenerateToken(userID, pix string, secretKey []byte) (string, error) {
 
 	signedToken, err := token.SignedString(secretKey)
 	if err != nil {
-		return "", fmt.Errorf("Error while signing the JWT token: %v", err)
+		return "", fmt.Errorf("error while signing the JWT token: %v", err)
 	}
 
 	return signedToken, nil

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/IgorGrieder/Leaky-Bucket/cmd/presentation"
 	"github.com/IgorGrieder/Leaky-Bucket/internal/application"
@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	fmt.Println("Starting the program")
+	log.Println("Starting the program")
 
 	// ENVs
 	cfg := config.NewConfig()
@@ -29,7 +29,7 @@ func main() {
 		LimitingRepository: LimitingRepository,
 	}
 
-	fmt.Println("Root layer stablished, starting the http server")
+	log.Println("root layer stablished, starting the http server")
 
 	// HTTP Server
 	presentation.StartHttpServer(cfg, gatewayService)

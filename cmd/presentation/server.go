@@ -2,6 +2,7 @@ package presentation
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 
@@ -19,7 +20,7 @@ func StartHttpServer(cfg *config.Config, gatewayService application.ProcessorSer
 	svr := &http.Server{Addr: fmt.Sprintf(":%d", cfg.PORT), Handler: mux}
 
 	if err := svr.ListenAndServe(); err != nil {
-		fmt.Println("Server crashed for some reason")
+		log.Println("Server stopped")
 		os.Exit(1)
 	}
 

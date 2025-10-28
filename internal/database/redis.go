@@ -20,7 +20,7 @@ func SetupRedis(cfg *config.Config) *redis.Client {
 
 	err := redis.Ping(context.Background()).Err()
 	if err != nil {
-		fmt.Printf("Ending the execution %v", err)
+		fmt.Printf("ending the execution %v", err)
 		os.Exit(1)
 	}
 

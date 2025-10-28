@@ -19,7 +19,7 @@ func (p *ProcessorService) ProcessMutation(mutation domain.Mutation, ctx context
 	entities, err := p.MutationRepository.QueryPixKey(mutation.PIX_KEY, ctx)
 
 	if err != nil {
-		log.Printf("Error fetching pix keys check: %v", err)
+		log.Printf("error fetching pix keys check: %v", err)
 
 		if errors.Is(err, sql.ErrNoRows) {
 			p.LimitingRepository.DecrementToken(ctx, "olaa")

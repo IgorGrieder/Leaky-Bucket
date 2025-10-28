@@ -18,7 +18,7 @@ func SetupPG(cfg *config.Config) *sql.DB {
 
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
-		fmt.Printf("Ending the execution %v", err)
+		fmt.Printf("ending the execution %v", err)
 		os.Exit(1)
 	}
 

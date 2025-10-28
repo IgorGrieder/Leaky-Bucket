@@ -14,19 +14,19 @@ func AuthMiddleware(next http.HandlerFunc, cfg *config.Config) http.HandlerFunc 
 
 		tokenString := r.Header.Get("Authorization")
 		if tokenString == "" {
-			http.Error(w, "Missing authorization header", http.StatusUnauthorized)
+			http.Error(w, "missing authorization header", http.StatusUnauthorized)
 			return
 		}
 
 		token := trimBearerPrefix(tokenString)
 		if token == tokenString {
-			http.Error(w, "Invalid authorization header format", http.StatusUnauthorized)
+			http.Error(w, "invalid authorization header format", http.StatusUnauthorized)
 			return
 		}
 
 		tokenParsed, err := application.Authenticate(token, cfg.HASH)
 		if err != nil || !tokenParsed.Valid {
-			http.Error(w, "Invalid token", http.StatusUnauthorized)
+			http.Error(w, "invalid token", http.StatusUnauthorized)
 			return
 		}
 
