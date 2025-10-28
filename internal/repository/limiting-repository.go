@@ -71,25 +71,9 @@ func (r *LimitingRepository) QueryToken(ctx context.Context, key string) (int32,
 
 	val, err = r.Redis.Get(ctxGetAgain, key).Int64()
 	if err != nil {
-		return 0, fmt.Errorf("error fetching token after failed SetNX: %v", err)
+		return 0, fmt.Errorf("Error fetching token after failed SetNX: %v", err)
 	}
 	return int32(val), nil
-}
-
-func (r *LimitingRepository) CreateToken(ctx context.Context, key string) (bool, error) {
-	mu := r.getLock(key)
-	mu.Lock()
-	defer mu.Unlock()
-
-	ctxRedis, cancel := context.WithTimeout(ctx, 1*time.Second)
-	defer cancel()
-
-	attemptsLeft := r.MAX_ATTEMPTS
-	created, err := r.Redis.SetNX(ctxRedis, key, attemptsLeft, 24*time.Hour).Result()
-	if err != nil {
-		return false, fmt.Errorf("Error creating token key in the bucket %v", err)
-	}
-	return created, nil
 }
 
 func (r *LimitingRepository) DecrementToken(ctx context.Context, key string) (int64, error) {
@@ -106,4 +90,3 @@ func (r *LimitingRepository) DecrementToken(ctx context.Context, key string) (in
 	}
 	return val, nil
 }
-
