@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -13,34 +12,16 @@ import (
 type LimitingRepository struct {
 	Redis        *redis.Client
 	MAX_ATTEMPTS int32
-
-	locks   map[string]*sync.Mutex
-	locksMu sync.Mutex
 }
 
 func NewLimitingRepository(redis *redis.Client) *LimitingRepository {
 	return &LimitingRepository{
 		Redis:        redis,
 		MAX_ATTEMPTS: 10,
-		locks:        make(map[string]*sync.Mutex),
 	}
-}
-
-func (r *LimitingRepository) getLock(key string) *sync.Mutex {
-	r.locksMu.Lock()
-	mu, ok := r.locks[key]
-	if !ok {
-		mu = &sync.Mutex{}
-		r.locks[key] = mu
-	}
-	r.locksMu.Unlock()
-	return mu
 }
 
 func (r *LimitingRepository) QueryToken(ctx context.Context, key string) (int32, error) {
-	mu := r.getLock(key)
-	mu.Lock()
-	defer mu.Unlock()
 
 	ctxRedis, cancel := context.WithTimeout(ctx, 1*time.Second)
 	defer cancel()
@@ -77,10 +58,6 @@ func (r *LimitingRepository) QueryToken(ctx context.Context, key string) (int32,
 }
 
 func (r *LimitingRepository) DecrementToken(ctx context.Context, key string) (int64, error) {
-	mu := r.getLock(key)
-	mu.Lock()
-	defer mu.Unlock()
-
 	ctxRedis, cancel := context.WithTimeout(ctx, 1*time.Second)
 	defer cancel()
 
@@ -90,3 +67,4 @@ func (r *LimitingRepository) DecrementToken(ctx context.Context, key string) (in
 	}
 	return val, nil
 }
+
