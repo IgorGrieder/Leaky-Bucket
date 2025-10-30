@@ -16,6 +16,12 @@ type ProcessorService struct {
 }
 
 func (p *ProcessorService) ProcessMutation(mutation domain.Mutation, ctx context.Context) ([]domain.Mutation, error) {
+	consumed, err := p.LimitingRepository.TryConsumeToken(ctx, "hi")
+
+	if !consumed {
+		return nil, &NoTokensError{}
+	}
+
 	entities, err := p.MutationRepository.QueryPixKey(mutation.PIX_KEY, ctx)
 
 	if err != nil {

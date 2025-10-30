@@ -2,6 +2,7 @@ package presentation
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/IgorGrieder/Leaky-Bucket/internal/application"
@@ -23,6 +24,12 @@ func NewMutationHandler(service application.ProcessorService) http.HandlerFunc {
 
 		pix_keys, err := service.ProcessMutation(request, r.Context())
 		if err != nil {
+
+			if errors.Is(err, &application.NoTokensError{}) {
+				http.Error(w, "too many requests", http.StatusTooManyRequests)
+				return
+			}
+
 			http.Error(w, "an error occured", http.StatusInternalServerError)
 			return
 		}

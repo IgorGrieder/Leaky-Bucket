@@ -21,7 +21,7 @@ func NewLimitingRepository(redis *redis.Client) *LimitingRepository {
 	}
 }
 
-func (r *LimitingRepository) TryConsumeToken(ctx context.Context, key string) (bool, int32, error) {
+func (r *LimitingRepository) TryConsumeToken(ctx context.Context, key string) (bool, error) {
 	ctxRedis, cancel := context.WithTimeout(ctx, 1*time.Second)
 	defer cancel()
 
@@ -34,11 +34,11 @@ func (r *LimitingRepository) TryConsumeToken(ctx context.Context, key string) (b
 		// SetNX = só cria se não existir (evita race na criação)
 		wasSet, err := r.Redis.SetNX(ctxInit, key, r.MAX_ATTEMPTS-1, 24*time.Hour).Result()
 		if err != nil {
-			return false, 0, fmt.Errorf("error initializing token bucket: %w", err)
+			return false, fmt.Errorf("error initializing token bucket: %w", err)
 		}
 
 		if wasSet {
-			return true, r.MAX_ATTEMPTS - 1, nil
+			return true, nil
 		}
 
 		// Outra goroutine criou primeiro - tenta de novo
@@ -52,11 +52,11 @@ func (r *LimitingRepository) TryConsumeToken(ctx context.Context, key string) (b
 		defer cancelRollback()
 
 		r.Redis.Incr(ctxRollback, key)
-		return false, 0, nil
+		return false, nil
 	}
 
 	// Sucesso - consumiu 1 token
-	return true, int32(remaining), nil
+	return true, nil
 }
 
 func (r *LimitingRepository) RefillToken(ctx context.Context, key string) error {
