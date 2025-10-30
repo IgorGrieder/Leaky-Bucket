@@ -38,3 +38,7 @@ func (p *ProcessorService) ProcessMutation(mutation domain.Mutation, ctx context
 
 	return ToMutationAPISlice(entities), nil
 }
+
+func (p *ProcessorService) RefillTokens() error {
+	p.LimitingRepository.RefillToken(ctx, "user:*")
+}
