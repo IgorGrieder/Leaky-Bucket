@@ -22,12 +22,13 @@ func (p *ProcessorService) ProcessMutation(mutation domain.Mutation, ctx context
 		log.Printf("error fetching pix keys check: %v", err)
 
 		if errors.Is(err, sql.ErrNoRows) {
-			p.LimitingRepository.DecrementToken(ctx, "olaa")
 			return []domain.Mutation{}, nil
 		}
 
 		return nil, err
 	}
+
+	p.LimitingRepository.RefillToken(ctx, "hi")
 
 	return ToMutationAPISlice(entities), nil
 }
