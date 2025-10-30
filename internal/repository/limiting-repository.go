@@ -21,50 +21,61 @@ func NewLimitingRepository(redis *redis.Client) *LimitingRepository {
 	}
 }
 
-func (r *LimitingRepository) QueryToken(ctx context.Context, key string) (int32, error) {
-
+func (r *LimitingRepository) TryConsumeToken(ctx context.Context, key string) (bool, int32, error) {
 	ctxRedis, cancel := context.WithTimeout(ctx, 1*time.Second)
 	defer cancel()
 
-	val, err := r.Redis.Get(ctxRedis, key).Int64()
-	if err == nil {
-		return int32(val), nil
-	}
-	if !errors.Is(err, redis.Nil) {
-		return 0, fmt.Errorf("Error fetching tokens in the bucket: %v", err)
+	remaining, err := r.Redis.Decr(ctxRedis, key).Result()
+
+	if errors.Is(err, redis.Nil) || err != nil {
+		ctxInit, cancelInit := context.WithTimeout(ctx, 1*time.Second)
+		defer cancelInit()
+
+		// SetNX = só cria se não existir (evita race na criação)
+		wasSet, err := r.Redis.SetNX(ctxInit, key, r.MAX_ATTEMPTS-1, 24*time.Hour).Result()
+		if err != nil {
+			return false, 0, fmt.Errorf("error initializing token bucket: %w", err)
+		}
+
+		if wasSet {
+			return true, r.MAX_ATTEMPTS - 1, nil
+		}
+
+		// Outra goroutine criou primeiro - tenta de novo
+		return r.TryConsumeToken(ctx, key)
 	}
 
-	ctxSet, cancelSet := context.WithTimeout(ctx, 1*time.Second)
-	defer cancelSet()
+	// Ficou negativo = sem tokens disponíveis
+	if remaining < 0 {
+		// Rollback: devolve o token
+		ctxRollback, cancelRollback := context.WithTimeout(ctx, 1*time.Second)
+		defer cancelRollback()
 
-	attemptsLeft := r.MAX_ATTEMPTS
-	wasSet, err := r.Redis.SetNX(ctxSet, key, attemptsLeft, 24*time.Hour).Result()
-	if err != nil {
-		return 0, fmt.Errorf("Error creating token key in the bucket: %v", err)
-	}
-	if wasSet {
-		return attemptsLeft, nil
+		r.Redis.Incr(ctxRollback, key)
+		return false, 0, nil
 	}
 
-	// Race lost — read again
-	ctxGetAgain, cancelGetAgain := context.WithTimeout(ctx, 1*time.Second)
-	defer cancelGetAgain()
-
-	val, err = r.Redis.Get(ctxGetAgain, key).Int64()
-	if err != nil {
-		return 0, fmt.Errorf("Error fetching token after failed SetNX: %v", err)
-	}
-	return int32(val), nil
+	// Sucesso - consumiu 1 token
+	return true, int32(remaining), nil
 }
 
-func (r *LimitingRepository) DecrementToken(ctx context.Context, key string) (int64, error) {
+func (r *LimitingRepository) RefillToken(ctx context.Context, key string) error {
 	ctxRedis, cancel := context.WithTimeout(ctx, 1*time.Second)
 	defer cancel()
 
-	val, err := r.Redis.Decr(ctxRedis, key).Result()
+	newValue, err := r.Redis.Incr(ctxRedis, key).Result()
 	if err != nil {
-		return 0, err
+		return fmt.Errorf("error refilling token: %w", err)
 	}
-	return val, nil
+
+	// Se ultrapassou o limite, ajusta para MAX
+	if newValue > int64(r.MAX_ATTEMPTS) {
+		ctxSet, cancelSet := context.WithTimeout(ctx, 1*time.Second)
+		defer cancelSet()
+
+		r.Redis.Set(ctxSet, key, r.MAX_ATTEMPTS, 24*time.Hour)
+	}
+
+	return nil
 }
 
