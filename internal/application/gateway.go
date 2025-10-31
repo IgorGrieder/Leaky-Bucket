@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/IgorGrieder/Leaky-Bucket/internal/domain"
 	"github.com/IgorGrieder/Leaky-Bucket/internal/repository"
@@ -40,21 +41,38 @@ func (p *ProcessorService) ProcessMutation(mutation domain.Mutation, ctx context
 	return ToMutationAPISlice(entities), nil
 }
 
-func (p *ProcessorService) FetchAndRefilTokens() error {
-	ctx := context.Background()
-
+func (p *ProcessorService) FetchAndRefilTokens(ctx context.Context) error {
 	var cursor uint64
-	keys, cursor, err := p.LimitingRepository.Redis.Scan(ctx, cursor, "*", 10).Result()
-	err := p.refillTokens(ctx)
-	if err != nil {
-		return err
+	var err error
+
+	for {
+		var keys []string
+		ctxRedis, cancel := context.WithTimeout(ctx, 1*time.Second)
+		defer cancel()
+
+		keys, cursor, err = p.LimitingRepository.Redis.Scan(ctxRedis, cursor, "*", 50).Result()
+		if err != nil {
+			log.Printf("failed to SCAN keys from Redis: %v", err)
+			return err
+		}
+
+		for _, key := range keys {
+			err := p.refillToken(ctx, key)
+			if err != nil {
+				log.Printf("Failed to refill token for key '%s': %v", key, err)
+			}
+		}
+
+		if cursor == 0 {
+			break
+		}
 	}
 
 	return nil
 }
 
-func (p *ProcessorService) refillTokens(ctx context.Context) error {
-	err := p.LimitingRepository.RefillToken(ctx, "user:*")
+func (p *ProcessorService) refillToken(ctx context.Context, key string) error {
+	err := p.LimitingRepository.RefillToken(ctx, key)
 	if err != nil {
 		return fmt.Errorf("error while refilling token %v", err)
 	}
