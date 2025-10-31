@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
 
 	"github.com/IgorGrieder/Leaky-Bucket/internal/domain"
@@ -39,6 +40,11 @@ func (p *ProcessorService) ProcessMutation(mutation domain.Mutation, ctx context
 	return ToMutationAPISlice(entities), nil
 }
 
-func (p *ProcessorService) RefillTokens() error {
-	p.LimitingRepository.RefillToken(ctx, "user:*")
+func (p *ProcessorService) RefillTokens(ctx context.Context) error {
+	err := p.LimitingRepository.RefillToken(ctx, "user:*")
+	if err != nil {
+		return fmt.Errorf("error while refilling token %v", err)
+	}
+
+	return nil
 }
