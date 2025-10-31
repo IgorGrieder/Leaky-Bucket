@@ -1,7 +1,6 @@
 package workers
 
 import (
-	"context"
 	"log"
 	"time"
 
@@ -13,9 +12,8 @@ func TokenRefillWorker(service application.ProcessorService) {
 	defer timer.Stop()
 
 	for range timer.C {
-		ctx := context.Background()
 
-		err := service.RefillTokens(ctx)
+		err := service.FetchAndRefilTokens()
 		if err != nil {
 			log.Printf("token refill failed: %v", err)
 		}

@@ -40,7 +40,20 @@ func (p *ProcessorService) ProcessMutation(mutation domain.Mutation, ctx context
 	return ToMutationAPISlice(entities), nil
 }
 
-func (p *ProcessorService) RefillTokens(ctx context.Context) error {
+func (p *ProcessorService) FetchAndRefilTokens() error {
+	ctx := context.Background()
+
+	var cursor uint64
+	keys, cursor, err := p.LimitingRepository.Redis.Scan(ctx, cursor, "*", 10).Result()
+	err := p.refillTokens(ctx)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *ProcessorService) refillTokens(ctx context.Context) error {
 	err := p.LimitingRepository.RefillToken(ctx, "user:*")
 	if err != nil {
 		return fmt.Errorf("error while refilling token %v", err)
