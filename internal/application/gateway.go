@@ -43,14 +43,13 @@ func (p *ProcessorService) ProcessMutation(mutation domain.Mutation, ctx context
 
 func (p *ProcessorService) FetchAndRefilTokens(ctx context.Context) error {
 	var cursor uint64
-	var err error
 
 	for {
 		var keys []string
 		ctxRedis, cancel := context.WithTimeout(ctx, 1*time.Second)
 		defer cancel()
 
-		keys, cursor, err = p.LimitingRepository.Redis.Scan(ctxRedis, cursor, "*", 50).Result()
+		keys, cursor, err := p.LimitingRepository.Redis.Scan(ctxRedis, cursor, "*", 50).Result()
 		if err != nil {
 			log.Printf("failed to SCAN keys from Redis: %v", err)
 			return err
