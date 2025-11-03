@@ -57,6 +57,7 @@ func (p *ProcessorService) FetchAndRefilTokens(ctx context.Context) error {
 
 		for _, key := range keys {
 			err := p.refillToken(ctx, key)
+			// If one error occur during the read of the keys we will ignore it
 			if err != nil {
 				log.Printf("Failed to refill token for key '%s': %v", key, err)
 			}
