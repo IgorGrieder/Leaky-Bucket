@@ -41,8 +41,9 @@ func (p *ProcessorService) ProcessMutation(mutation domain.Mutation, ctx context
 	return ToMutationAPISlice(entities), nil
 }
 
-func (p *ProcessorService) FetchAndRefilTokens(ctx context.Context) error {
+func (p *ProcessorService) FetchAndRefilTokens() error {
 	var cursor uint64
+	ctx := context.Background()
 
 	for {
 		var keys []string
