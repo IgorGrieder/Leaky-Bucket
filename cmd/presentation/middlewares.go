@@ -1,12 +1,13 @@
 package presentation
 
 import (
-	"context"
+	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/IgorGrieder/Leaky-Bucket/internal/application"
 	"github.com/IgorGrieder/Leaky-Bucket/internal/config"
+	"github.com/IgorGrieder/Leaky-Bucket/internal/ctx"
 )
 
 func AuthMiddleware(next http.HandlerFunc, cfg *config.Config) http.HandlerFunc {
@@ -30,8 +31,14 @@ func AuthMiddleware(next http.HandlerFunc, cfg *config.Config) http.HandlerFunc 
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), "JWT", tokenParsed)
-		next(w, r.WithContext(ctx))
+		claims, ok := tokenParsed.Claims.(*application.JWT)
+		if !ok {
+			http.Error(w, "invalid token", http.StatusUnauthorized)
+			return
+		}
+
+		newCtx := ctx.SetUserIdCtx(r.Context(), claims.UserID)
+		next(w, r.WithContext(newCtx))
 	})
 }
 
