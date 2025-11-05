@@ -6,7 +6,6 @@ import (
 
 	"github.com/IgorGrieder/Leaky-Bucket/internal/application"
 	"github.com/IgorGrieder/Leaky-Bucket/internal/config"
-	"github.com/IgorGrieder/Leaky-Bucket/internal/ctx"
 )
 
 func AuthMiddleware(next http.HandlerFunc, cfg *config.Config) http.HandlerFunc {
@@ -36,7 +35,6 @@ func AuthMiddleware(next http.HandlerFunc, cfg *config.Config) http.HandlerFunc 
 			return
 		}
 
-		newCtx := ctx.SetUserIdCtx(r.Context(), claims.UserID)
 		next(w, r.WithContext(newCtx))
 	})
 }
