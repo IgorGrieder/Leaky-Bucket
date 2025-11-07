@@ -53,7 +53,7 @@ func NewMutationHandler(service application.ProcessorService) MutationHandler {
 	}
 }
 
-func Authenticate(authService *application.AuthService) http.HandlerFunc {
+func Authenticate(authService application.AuthService) http.HandlerFunc {
 	type response struct {
 		Token string `json:"token"`
 	}

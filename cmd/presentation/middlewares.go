@@ -9,7 +9,7 @@ import (
 	"github.com/IgorGrieder/Leaky-Bucket/internal/domain"
 )
 
-func AuthMiddleware(handler MutationHandler, cfg *config.Config) http.HandlerFunc {
+func AuthMiddleware(handler MutationHandler, authService application.AuthService, cfg *config.Config) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		tokenString := r.Header.Get("Authorization")
@@ -24,7 +24,7 @@ func AuthMiddleware(handler MutationHandler, cfg *config.Config) http.HandlerFun
 			return
 		}
 
-		tokenParsed, err := application.Authenticate(token, cfg.HASH)
+		tokenParsed, err := authService.Authenticate(token, cfg.HASH)
 		if err != nil || !tokenParsed.Valid {
 			http.Error(w, "invalid token", http.StatusUnauthorized)
 			return

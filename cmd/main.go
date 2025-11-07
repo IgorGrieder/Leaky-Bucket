@@ -29,8 +29,10 @@ func main() {
 		LimitingRepository: LimitingRepository,
 	}
 
+	authService := application.AuthService{}
+
 	log.Println("root layer stablished, starting the http server")
 
 	// HTTP Server
-	presentation.StartHttpServer(cfg, gatewayService)
+	presentation.StartHttpServer(cfg, gatewayService, authService)
 }

@@ -10,12 +10,12 @@ import (
 	"github.com/IgorGrieder/Leaky-Bucket/internal/config"
 )
 
-func StartHttpServer(cfg *config.Config, gatewayService application.ProcessorService) {
+func StartHttpServer(cfg *config.Config, gatewayService application.ProcessorService, authService *application.AuthService) {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("POST /mutation", AuthMiddleware(NewMutationHandler(gatewayService), cfg))
-	mux.HandleFunc("POST /generateJWT", Authenticate)
+	mux.HandleFunc("POST /mutation", AuthMiddleware(NewMutationHandler(gatewayService), authService, cfg))
+	mux.HandleFunc("POST /generateJWT", Authenticate(authService))
 
 	svr := &http.Server{Addr: fmt.Sprintf(":%d", cfg.PORT), Handler: mux}
 
