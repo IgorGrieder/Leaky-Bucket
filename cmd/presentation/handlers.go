@@ -13,6 +13,10 @@ import (
 type MutationHandler func(w http.ResponseWriter, r *http.Request, user *domain.User)
 
 func NewMutationHandler(service application.ProcessorService) MutationHandler {
+	type response struct {
+		Data []domain.Mutation `json:"data"`
+	}
+
 	return func(w http.ResponseWriter, r *http.Request, user *domain.User) {
 		var request domain.Mutation
 		if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -25,7 +29,7 @@ func NewMutationHandler(service application.ProcessorService) MutationHandler {
 			return
 		}
 
-		pix_keys, err := service.ProcessMutation(request, r.Context())
+		pix_keys, err := service.ProcessMutation(request, r.Context(), user)
 		if err != nil {
 
 			if errors.Is(err, &application.NoTokensError{}) {
@@ -42,7 +46,9 @@ func NewMutationHandler(service application.ProcessorService) MutationHandler {
 			return
 		}
 
-		returnJson, err := json.Marshal(pix_keys)
+		response := &response{Data: pix_keys}
+
+		returnJson, err := json.Marshal(response)
 		if err != nil {
 			http.Error(w, "failed to create JSON response", http.StatusInternalServerError)
 			return
