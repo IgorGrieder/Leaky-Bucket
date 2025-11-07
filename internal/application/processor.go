@@ -8,7 +8,6 @@ import (
 	"log"
 	"time"
 
-	"github.com/IgorGrieder/Leaky-Bucket/internal/ctx"
 	"github.com/IgorGrieder/Leaky-Bucket/internal/domain"
 	"github.com/IgorGrieder/Leaky-Bucket/internal/repository"
 )
@@ -18,19 +17,14 @@ type ProcessorService struct {
 	MutationRepository *repository.MutationRepository
 }
 
-func (p *ProcessorService) ProcessMutation(mutation domain.Mutation, rContext context.Context) ([]domain.Mutation, error) {
-	userId, err := ctx.GetUserIdCtx(rContext)
-	if err != nil {
-		return nil, fmt.Errorf("error processing the mutation %v", err)
-	}
-
-	consumed, err := p.LimitingRepository.TryConsumeToken(rContext, userId)
+func (p *ProcessorService) ProcessMutation(mutation domain.Mutation, ctx context.Context, user *domain.User) ([]domain.Mutation, error) {
+	consumed, err := p.LimitingRepository.TryConsumeToken(ctx, user.Id)
 
 	if !consumed {
 		return nil, &NoTokensError{}
 	}
 
-	entities, err := p.MutationRepository.QueryPixKey(mutation.PIX_KEY, rContext)
+	entities, err := p.MutationRepository.QueryPixKey(mutation.PIX_KEY, ctx)
 
 	if err != nil {
 		log.Printf("error fetching pix keys check: %v", err)
@@ -42,7 +36,7 @@ func (p *ProcessorService) ProcessMutation(mutation domain.Mutation, rContext co
 		return nil, err
 	}
 
-	p.LimitingRepository.RefillToken(rContext, "hi")
+	p.LimitingRepository.RefillToken(ctx, "hi")
 
 	return ToMutationAPISlice(entities), nil
 }
