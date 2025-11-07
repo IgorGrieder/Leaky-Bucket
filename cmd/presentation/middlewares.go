@@ -6,9 +6,10 @@ import (
 
 	"github.com/IgorGrieder/Leaky-Bucket/internal/application"
 	"github.com/IgorGrieder/Leaky-Bucket/internal/config"
+	"github.com/IgorGrieder/Leaky-Bucket/internal/domain"
 )
 
-func AuthMiddleware(next http.HandlerFunc, cfg *config.Config) http.HandlerFunc {
+func AuthMiddleware(handler MutationHandler, cfg *config.Config) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		tokenString := r.Header.Get("Authorization")
@@ -35,7 +36,9 @@ func AuthMiddleware(next http.HandlerFunc, cfg *config.Config) http.HandlerFunc 
 			return
 		}
 
-		next(w, r.WithContext(newCtx))
+		user := &domain.User{Id: claims.UserID}
+
+		handler(w, r, user)
 	})
 }
 

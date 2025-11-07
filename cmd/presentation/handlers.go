@@ -9,8 +9,10 @@ import (
 	"github.com/IgorGrieder/Leaky-Bucket/internal/domain"
 )
 
-func NewMutationHandler(service application.ProcessorService) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+type MutationHandler func(w http.ResponseWriter, r *http.Request, user *domain.User)
+
+func NewMutationHandler(service application.ProcessorService) MutationHandler {
+	return func(w http.ResponseWriter, r *http.Request, user *domain.User) {
 		var request domain.Mutation
 		if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 			http.Error(w, "invalid request object", http.StatusBadRequest)
