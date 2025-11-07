@@ -9,7 +9,6 @@ import (
 
 type JWT struct {
 	UserID string `json:"user_id"`
-	PIX    string `json:"pix"`
 	jwt.RegisteredClaims
 }
 
@@ -30,7 +29,6 @@ func Authenticate(tokenString string, hashSecret string) (*jwt.Token, error) {
 func GenerateToken(userID, pix string, secretKey []byte) (string, error) {
 	claims := &JWT{
 		UserID: userID,
-		PIX:    pix,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   userID,
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(1 * time.Hour)),

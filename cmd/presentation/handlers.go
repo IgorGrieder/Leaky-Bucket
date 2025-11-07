@@ -54,37 +54,14 @@ func NewMutationHandler(service application.ProcessorService) MutationHandler {
 
 func Authenticate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var request *domain.Mutation
+		var request *domain.User
 		if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 			http.Error(w, "invalid request object", http.StatusBadRequest)
 			return
 		}
 
-		if len(request.PIX_KEY) == 0 {
+		if len(request.Id) == 0 {
 			http.Error(w, "invalid request object", http.StatusBadRequest)
-			return
-		}
-
-		pix_keys, err := service.ProcessMutation(request, r.Context())
-		if err != nil {
-
-			if errors.Is(err, &application.NoTokensError{}) {
-				http.Error(w, "too many requests", http.StatusTooManyRequests)
-				return
-			}
-
-			http.Error(w, "an error occured", http.StatusInternalServerError)
-			return
-		}
-
-		if len(pix_keys) == 0 {
-			http.Error(w, "no matches found for the request key", http.StatusNotFound)
-			return
-		}
-
-		returnJson, err := json.Marshal(pix_keys)
-		if err != nil {
-			http.Error(w, "failed to create JSON response", http.StatusInternalServerError)
 			return
 		}
 
