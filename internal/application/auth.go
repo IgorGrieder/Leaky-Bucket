@@ -4,15 +4,20 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/IgorGrieder/Leaky-Bucket/internal/config"
 	"github.com/golang-jwt/jwt/v5"
 )
 
 type JWT struct {
-	UserID string `json:"user_id"`
+	UserID string
 	jwt.RegisteredClaims
 }
 
-func Authenticate(tokenString string, hashSecret string) (*jwt.Token, error) {
+type AuthService struct {
+	config *config.Config
+}
+
+func (auth *AuthService) Authenticate(tokenString string, hashSecret string) (*jwt.Token, error) {
 	claims := &JWT{}
 
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (any, error) {
@@ -26,7 +31,7 @@ func Authenticate(tokenString string, hashSecret string) (*jwt.Token, error) {
 
 }
 
-func GenerateToken(userID, pix string, secretKey []byte) (string, error) {
+func (auth *AuthService) GenerateToken(userID string) (string, error) {
 	claims := &JWT{
 		UserID: userID,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -35,6 +40,8 @@ func GenerateToken(userID, pix string, secretKey []byte) (string, error) {
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
+
+	secretKey := auth.config.HASH
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 

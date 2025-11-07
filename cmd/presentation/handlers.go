@@ -3,6 +3,7 @@ package presentation
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 
 	"github.com/IgorGrieder/Leaky-Bucket/internal/application"
@@ -52,7 +53,11 @@ func NewMutationHandler(service application.ProcessorService) MutationHandler {
 	}
 }
 
-func Authenticate() http.HandlerFunc {
+func Authenticate(authService *application.AuthService) http.HandlerFunc {
+	type response struct {
+		Token string `json:"token"`
+	}
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		var request *domain.User
 		if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -62,6 +67,22 @@ func Authenticate() http.HandlerFunc {
 
 		if len(request.Id) == 0 {
 			http.Error(w, "invalid request object", http.StatusBadRequest)
+			return
+		}
+
+		token, err := authService.GenerateToken(request.Id)
+		response := &response{Token: token}
+
+		if err != nil {
+			log.Printf("error generating token %v", err)
+			http.Error(w, "failed generating jwt token", http.StatusBadRequest)
+			return
+		}
+
+		returnJson, err := json.Marshal(response)
+		if err != nil {
+			log.Printf("error generating token %v", err)
+			http.Error(w, "failed generating jwt token", http.StatusBadRequest)
 			return
 		}
 
