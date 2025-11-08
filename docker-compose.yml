@@ -9,7 +9,7 @@ services:
     ports:
       - "5432:5432" 
     volumes:
-      - postgres_data_leaky_bucket:/var/lib/postgresql/data 
+      - postgres_data_leaky_bucket:/var/lib/postgresql 
     restart: always 
 
   redis:
