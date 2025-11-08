@@ -49,7 +49,7 @@ func (auth *AuthService) GenerateToken(userID string) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	signedToken, err := token.SignedString(secretKey)
+	signedToken, err := token.SignedString([]byte(secretKey))
 	if err != nil {
 		return "", fmt.Errorf("error while signing the JWT token: %v", err)
 	}
