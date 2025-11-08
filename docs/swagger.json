@@ -24,7 +24,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/presentation.MutationRequest"
+                            "$ref": "#/definitions/domain.Mutation"
                         }
                     }
                 ],
@@ -52,7 +52,7 @@
         }
     },
     "definitions": {
-        "presentation.MutationRequest": {
+        "domain.Mutation": {
             "type": "object",
             "properties": {
                 "pix_key": {

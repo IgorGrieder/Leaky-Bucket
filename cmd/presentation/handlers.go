@@ -10,7 +10,6 @@ import (
 	"github.com/IgorGrieder/Leaky-Bucket/internal/domain"
 )
 
-type MutationRequest domain.Mutation
 type MutationHandler func(w http.ResponseWriter, r *http.Request, user *domain.User)
 
 // NewMutationHandler processes the leaky bucket mutation request.
@@ -19,7 +18,7 @@ type MutationHandler func(w http.ResponseWriter, r *http.Request, user *domain.U
 // @Tags Gateway
 // @Accept json
 // @Produce json
-// @Param request body MutationRequest true "Mutation Request Data"
+// @Param request body domain.Mutation true "Mutation Request Data"
 // @Success 200 {string} string "Request processed successfully"
 // @Failure 429 {string} string "Rate limit exceeded (Leaky Bucket)"
 // @Failure 500 {object} string "Internal server error"

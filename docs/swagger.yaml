@@ -1,5 +1,5 @@
 definitions:
-  presentation.MutationRequest:
+  domain.Mutation:
     properties:
       pix_key:
         type: string
@@ -19,7 +19,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/presentation.MutationRequest'
+          $ref: '#/definitions/domain.Mutation'
       produces:
       - application/json
       responses:

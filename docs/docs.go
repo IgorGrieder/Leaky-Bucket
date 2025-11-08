@@ -35,7 +35,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/presentation.MutationRequest"
+                            "$ref": "#/definitions/domain.Mutation"
                         }
                     }
                 ],
@@ -63,7 +63,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "presentation.MutationRequest": {
+        "domain.Mutation": {
             "type": "object",
             "properties": {
                 "pix_key": {
