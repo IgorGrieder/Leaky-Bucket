@@ -10,8 +10,20 @@ import (
 	"github.com/IgorGrieder/Leaky-Bucket/internal/domain"
 )
 
+type MutationRequest domain.Mutation
 type MutationHandler func(w http.ResponseWriter, r *http.Request, user *domain.User)
 
+// NewMutationHandler processes the leaky bucket mutation request.
+// @Summary Process Leaky Bucket Mutation
+// @Description Attempts to process a mutation request, checking rate limits via the Leaky Bucket algorithm.
+// @Tags Gateway
+// @Accept json
+// @Produce json
+// @Param request body MutationRequest true "Mutation Request Data"
+// @Success 200 {string} string "Request processed successfully"
+// @Failure 429 {string} string "Rate limit exceeded (Leaky Bucket)"
+// @Failure 500 {object} string "Internal server error"
+// @Router /mutation [post]
 func NewMutationHandler(service application.ProcessorService) MutationHandler {
 	type response struct {
 		Data []domain.Mutation `json:"data"`

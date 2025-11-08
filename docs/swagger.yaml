@@ -1,0 +1,41 @@
+definitions:
+  presentation.MutationRequest:
+    properties:
+      pix_key:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /mutation:
+    post:
+      consumes:
+      - application/json
+      description: Attempts to process a mutation request, checking rate limits via
+        the Leaky Bucket algorithm.
+      parameters:
+      - description: Mutation Request Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/presentation.MutationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Request processed successfully
+          schema:
+            type: string
+        "429":
+          description: Rate limit exceeded (Leaky Bucket)
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Process Leaky Bucket Mutation
+      tags:
+      - Gateway
+swagger: "2.0"

@@ -48,3 +48,14 @@ Implement all Leaky Bucket from Dict
 [https://www.bcb.gov.br/content/estabilidadefinanceira/pix/API-DICT.html#section/Seguranca/Limitacao-de-requisicoes](https://www.bcb.gov.br/content/estabilidadefinanceira/pix/API-DICT.html#section/Seguranca/Limitacao-de-requisicoes)
 
 Making this open source will get you a job in any Brazilian Fintech
+
+## API Docs
+
+To document the API I'm using Swagger with OpenAPI and the followings commands
+builds the new swagger docs if a route is created
+
+The Swagger is exposed at _http://localhost:8080/swagger/index.html_
+
+```bash
+swag init --generalInfo cmd/main.go --dir ./
+```

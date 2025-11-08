@@ -1,0 +1,64 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/mutation": {
+            "post": {
+                "description": "Attempts to process a mutation request, checking rate limits via the Leaky Bucket algorithm.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gateway"
+                ],
+                "summary": "Process Leaky Bucket Mutation",
+                "parameters": [
+                    {
+                        "description": "Mutation Request Data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presentation.MutationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Request processed successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded (Leaky Bucket)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "presentation.MutationRequest": {
+            "type": "object",
+            "properties": {
+                "pix_key": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
