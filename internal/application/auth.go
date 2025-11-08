@@ -17,6 +17,10 @@ type AuthService struct {
 	config *config.Config
 }
 
+func NewAuthService(cfg *config.Config) AuthService {
+	return AuthService{config: cfg}
+}
+
 func (auth *AuthService) Authenticate(tokenString string, hashSecret string) (*jwt.Token, error) {
 	claims := &JWT{}
 
