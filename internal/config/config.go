@@ -19,7 +19,7 @@ type Config struct {
 
 func NewConfig() *Config {
 	port := parseInt(getEnv("PORT", "8080"))
-	reddisAddr := getEnv("REDIS_ADDR", "redis")
+	reddisAddr := getEnv("REDIS_ADDR", "localhost")
 	reddisPort := parseInt(getEnv("REDIS_PORT", "6379"))
 	host := getEnv("PG_HOST", "localhost")
 	portPG := parseInt(getEnv("PG_PORT", "5432"))
