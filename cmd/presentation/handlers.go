@@ -71,17 +71,13 @@ func NewMutationHandler(service application.ProcessorService) MutationHandler {
 	}
 }
 
-type TokenResponse struct {
-	Token string `json:"token"`
-}
-
 // @Summary Generating JWT Token
 // @Description Returns a valid JWT Token
 // @Tags Gateway
 // @Accept json
 // @Produce json
 // @Param request body domain.User true "User"
-// @Success 200 {object} TokenResponse "Generated JWT"
+// @Success 204
 // @Failure 400 {string} string "invalid request object"
 // @Failure 500 {string} string "failed generating jwt token"
 // @Router /generateJWT [post]
@@ -100,23 +96,19 @@ func Authenticate(authService application.AuthService) http.HandlerFunc {
 		}
 
 		token, err := authService.GenerateToken(request.Id)
-		response := &TokenResponse{Token: token}
-
 		if err != nil {
 			log.Printf("error generating token %v", err)
 			http.Error(w, "failed generating jwt token", http.StatusInternalServerError)
 			return
 		}
 
-		returnJson, err := json.Marshal(response)
-		if err != nil {
-			log.Printf("error generating token %v", err)
-			http.Error(w, "failed generating jwt token", http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(returnJson)
+		http.SetCookie(w, &http.Cookie{
+			Name:     "JWT_Token",
+			Value:    token,
+			HttpOnly: true,
+			Secure:   true,
+			SameSite: http.SameSiteDefaultMode,
+		})
+		w.WriteHeader(http.StatusNoContent)
 	}
-
 }
