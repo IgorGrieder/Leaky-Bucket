@@ -12,7 +12,17 @@ import (
 func AuthMiddleware(handler MutationHandler, authService application.AuthService, cfg *config.Config) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		tokenString := r.Header.Get("Authorization")
+		cookie, err := r.Cookie("JWT_Token")
+		if err != nil {
+			if err == http.ErrNoCookie {
+				http.Error(w, "JWT cookie not found", http.StatusUnauthorized)
+				return
+			}
+			http.Error(w, "Failed to retrieve cookie", http.StatusInternalServerError)
+			return
+		}
+
+		tokenString := cookie.Value
 		if tokenString == "" {
 			http.Error(w, "missing authorization header", http.StatusUnauthorized)
 			return
