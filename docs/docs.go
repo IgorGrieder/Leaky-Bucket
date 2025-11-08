@@ -24,6 +24,52 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/generateJWT": {
+            "post": {
+                "description": "Returns a valid JWT Token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gateway"
+                ],
+                "summary": "Generating JWT Token",
+                "parameters": [
+                    {
+                        "description": "User",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Generated JWT",
+                        "schema": {
+                            "$ref": "#/definitions/presentation.TokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request object",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "failed generating jwt token",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/mutation": {
             "post": {
                 "security": [
@@ -57,7 +103,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Request processed successfully",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/presentation.MutationResponse"
                         }
                     },
                     "429": {
@@ -81,6 +127,33 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "pix_key": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.User": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentation.MutationResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Mutation"
+                    }
+                }
+            }
+        },
+        "presentation.TokenResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
                     "type": "string"
                 }
             }

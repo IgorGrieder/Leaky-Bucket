@@ -5,6 +5,23 @@ definitions:
       pix_key:
         type: string
     type: object
+  domain.User:
+    properties:
+      id:
+        type: string
+    type: object
+  presentation.MutationResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/domain.Mutation'
+        type: array
+    type: object
+  presentation.TokenResponse:
+    properties:
+      token:
+        type: string
+    type: object
 host: leakyBucket
 info:
   contact:
@@ -19,6 +36,36 @@ info:
   title: Swagger Example API
   version: "1.0"
 paths:
+  /generateJWT:
+    post:
+      consumes:
+      - application/json
+      description: Returns a valid JWT Token
+      parameters:
+      - description: User
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Generated JWT
+          schema:
+            $ref: '#/definitions/presentation.TokenResponse'
+        "400":
+          description: invalid request object
+          schema:
+            type: string
+        "500":
+          description: failed generating jwt token
+          schema:
+            type: string
+      summary: Generating JWT Token
+      tags:
+      - Gateway
   /mutation:
     post:
       consumes:
@@ -38,7 +85,7 @@ paths:
         "200":
           description: Request processed successfully
           schema:
-            type: string
+            $ref: '#/definitions/presentation.MutationResponse'
         "429":
           description: Rate limit exceeded (Leaky Bucket)
           schema:
