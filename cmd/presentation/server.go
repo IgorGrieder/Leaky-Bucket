@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	_ "github.com/IgorGrieder/Leaky-Bucket/cmd/docs"
 	"github.com/IgorGrieder/Leaky-Bucket/internal/application"
 	"github.com/IgorGrieder/Leaky-Bucket/internal/config"
 	"github.com/swaggo/http-swagger"
@@ -31,7 +32,7 @@ func StartHttpServer(cfg *config.Config, gatewayService application.ProcessorSer
 
 	mux.HandleFunc("POST /mutation", AuthMiddleware(NewMutationHandler(gatewayService), authService, cfg))
 	mux.HandleFunc("POST /generateJWT", Authenticate(authService))
-	mux.HandleFunc("GET /swagger", httpSwagger.Handler(httpSwagger.URL("http://localhost:1323/swagger/doc.json")))
+	mux.HandleFunc("GET /swagger", httpSwagger.Handler(httpSwagger.URL("http://localhost:8080/swagger/doc.json")))
 
 	svr := &http.Server{Addr: fmt.Sprintf(":%d", cfg.PORT), Handler: mux}
 
