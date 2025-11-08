@@ -26,8 +26,6 @@ services:
       - redis_data_leaky_bucket:/data
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
-    networks:
-      - backend
     
   leaky-bucket: 
     build: .
