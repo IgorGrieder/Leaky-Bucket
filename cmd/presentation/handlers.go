@@ -23,6 +23,7 @@ type MutationHandler func(w http.ResponseWriter, r *http.Request, user *domain.U
 // @Failure 429 {string} string "Rate limit exceeded (Leaky Bucket)"
 // @Failure 500 {object} string "Internal server error"
 // @Router /mutation [post]
+// @security BearerAuth
 func NewMutationHandler(service application.ProcessorService) MutationHandler {
 	type response struct {
 		Data []domain.Mutation `json:"data"`

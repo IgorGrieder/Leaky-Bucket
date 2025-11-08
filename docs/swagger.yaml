@@ -1,11 +1,23 @@
+basePath: /v2
 definitions:
   domain.Mutation:
     properties:
       pix_key:
         type: string
     type: object
+host: leakyBucket
 info:
-  contact: {}
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a leaky bucket project
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
 paths:
   /mutation:
     post:
@@ -35,7 +47,15 @@ paths:
           description: Internal server error
           schema:
             type: string
+      security:
+      - BearerAuth: []
       summary: Process Leaky Bucket Mutation
       tags:
       - Gateway
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

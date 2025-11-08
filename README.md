@@ -57,5 +57,5 @@ builds the new swagger docs if a route is created
 The Swagger is exposed at _http://localhost:8080/swagger/index.html_
 
 ```bash
-swag init --generalInfo cmd/main.go --dir ./
+swag init -g cmd/presentation/server.go
 ```

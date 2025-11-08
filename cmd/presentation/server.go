@@ -24,6 +24,11 @@ import (
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token.
+
 // @host leakyBucket
 // @BasePath /v2
 func StartHttpServer(cfg *config.Config, gatewayService application.ProcessorService, authService application.AuthService) {
