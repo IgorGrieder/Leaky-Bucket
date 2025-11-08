@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/IgorGrieder/Leaky-Bucket/internal/application"
 	"github.com/IgorGrieder/Leaky-Bucket/internal/domain"
@@ -106,8 +107,8 @@ func Authenticate(authService application.AuthService) http.HandlerFunc {
 			Name:     "JWT_Token",
 			Value:    token,
 			HttpOnly: true,
-			Secure:   true,
 			SameSite: http.SameSiteDefaultMode,
+			Expires:  time.Now().Add(1 * time.Hour),
 		})
 		w.WriteHeader(http.StatusNoContent)
 	}
