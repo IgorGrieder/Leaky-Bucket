@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/IgorGrieder/Leaky-Bucket/cmd/presentation"
+	"github.com/IgorGrieder/Leaky-Bucket/cmd/workers"
 	"github.com/IgorGrieder/Leaky-Bucket/internal/application"
 	"github.com/IgorGrieder/Leaky-Bucket/internal/config"
 	"github.com/IgorGrieder/Leaky-Bucket/internal/database"
@@ -31,8 +32,10 @@ func main() {
 
 	authService := application.NewAuthService(cfg)
 
-	log.Println("root layer stablished, starting the http server")
+	log.Println("root layer stablished, starting the refill worker")
+	go workers.TokenRefillWorker(gatewayService)
 
+	log.Println("root layer stablished, starting the http server")
 	// HTTP Server
 	presentation.StartHttpServer(cfg, gatewayService, authService)
 }
