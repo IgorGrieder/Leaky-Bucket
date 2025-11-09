@@ -15,9 +15,9 @@ func TokenRefillWorker(service application.ProcessorService) {
 
 		err := service.FetchAndRefilTokens()
 		if err != nil {
-			log.Printf("token refill failed: %v", err)
+			log.Printf("token refill job failed: %v", err)
 		}
 
-		log.Printf("token refill succeeded: %v", err)
+		log.Printf("token refill job succeeded")
 	}
 }
