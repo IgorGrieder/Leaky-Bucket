@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -25,7 +24,7 @@ func (r *LimitingRepository) TryConsumeToken(ctx context.Context, key string) (b
 	ctxSet, cancelSet := context.WithTimeout(ctx, 1*time.Second)
 	defer cancelSet()
 
-	wasSet, err := r.Redis.SetNX(ctxSet, key, r.MAX_ATTEMPTS-1, 0).Result()
+	wasSet, err := r.Redis.SetNX(ctxSet, key, r.MAX_ATTEMPTS-1, 24*time.Hour).Result()
 	if err != nil {
 		return false, fmt.Errorf("error initializing token bucket: %w", err)
 	}
