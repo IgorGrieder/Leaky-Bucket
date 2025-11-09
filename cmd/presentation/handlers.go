@@ -3,6 +3,7 @@ package presentation
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -103,9 +104,11 @@ func Authenticate(authService application.AuthService) http.HandlerFunc {
 			return
 		}
 
+		returnToken := fmt.Sprintf("Bearer %s", token)
+
 		http.SetCookie(w, &http.Cookie{
 			Name:     "JWT_Token",
-			Value:    token,
+			Value:    returnToken,
 			HttpOnly: true,
 			SameSite: http.SameSiteDefaultMode,
 			Expires:  time.Now().Add(1 * time.Hour),
