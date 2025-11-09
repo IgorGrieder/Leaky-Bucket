@@ -1,22 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is a leaky bucket project",
-        "title": "Swagger Example API",
-        "termsOfService": "http://swagger.io/terms/",
-        "contact": {
-            "name": "API Support",
-            "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        },
-        "version": "1.0"
+        "contact": {}
     },
-    "host": "leakyBucket",
-    "basePath": "/v2",
     "paths": {
         "/generateJWT": {
             "post": {
@@ -43,11 +29,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Generated JWT",
-                        "schema": {
-                            "$ref": "#/definitions/presentation.TokenResponse"
-                        }
+                    "204": {
+                        "description": "No Content"
                     },
                     "400": {
                         "description": "invalid request object",
@@ -143,22 +126,6 @@
                     }
                 }
             }
-        },
-        "presentation.TokenResponse": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "string"
-                }
-            }
-        }
-    },
-    "securityDefinitions": {
-        "BearerAuth": {
-            "description": "Type \"Bearer\" followed by a space and JWT token.",
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
         }
     }
 }

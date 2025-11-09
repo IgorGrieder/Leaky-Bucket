@@ -25,12 +25,11 @@ import (
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
 // @securityDefinitions.apikey BearerAuth
-// @in header
-// @name Authorization
+// @in cookie
+// @name JWT_Token
 // @description Type "Bearer" followed by a space and JWT token.
 
-// @host leakyBucket
-// @BasePath /v2
+// @host localhost:8080
 func StartHttpServer(cfg *config.Config, gatewayService application.ProcessorService, authService application.AuthService) {
 
 	mux := http.NewServeMux()
