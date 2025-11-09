@@ -28,7 +28,7 @@ func (auth *AuthService) Authenticate(tokenString string, hashSecret string) (*j
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return hashSecret, nil
+		return []byte(hashSecret), nil
 	})
 
 	return token, err
