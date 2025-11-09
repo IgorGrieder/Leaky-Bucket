@@ -1,7 +1,7 @@
 package workers
 
 import (
-	"log"
+	"log/slog"
 	"time"
 
 	"github.com/IgorGrieder/Leaky-Bucket/internal/application"
@@ -15,9 +15,9 @@ func TokenRefillWorker(service application.ProcessorService) {
 
 		err := service.FetchAndRefilTokens()
 		if err != nil {
-			log.Printf("token refill job failed: %v", err)
+			slog.Error("token refill job failed", slog.Any("error", err))
 		}
 
-		log.Printf("token refill job succeeded")
+		slog.Info("token refill job succeeded")
 	}
 }

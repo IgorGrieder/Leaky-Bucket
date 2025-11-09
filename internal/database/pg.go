@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 
 	"database/sql"
@@ -18,7 +19,7 @@ func SetupPG(cfg *config.Config) *sql.DB {
 
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
-		fmt.Printf("ending the execution %v", err)
+		slog.Error("failed connecting into PG")
 		os.Exit(1)
 	}
 

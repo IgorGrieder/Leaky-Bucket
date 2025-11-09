@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"os"
 
 	"github.com/IgorGrieder/Leaky-Bucket/internal/config"
@@ -20,7 +21,8 @@ func SetupRedis(cfg *config.Config) *redis.Client {
 
 	err := redis.Ping(context.Background()).Err()
 	if err != nil {
-		fmt.Printf("ending the execution %v", err)
+		slog.Error("failed connecting into Redis")
+
 		os.Exit(1)
 	}
 

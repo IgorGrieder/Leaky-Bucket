@@ -1,7 +1,8 @@
 package main
 
 import (
-	"log"
+	"log/slog"
+	"os"
 
 	"github.com/IgorGrieder/Leaky-Bucket/cmd/presentation"
 	"github.com/IgorGrieder/Leaky-Bucket/cmd/workers"
@@ -12,7 +13,10 @@ import (
 )
 
 func main() {
-	log.Println("Starting the program")
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
+
+	slog.Info("Starting the program")
 
 	// ENVs
 	cfg := config.NewConfig()
@@ -32,10 +36,10 @@ func main() {
 
 	authService := application.NewAuthService(cfg)
 
-	log.Println("root layer stablished, starting the refill worker")
+	slog.Info("root layer stablished, starting the refill worker")
 	go workers.TokenRefillWorker(gatewayService)
 
-	log.Println("root layer stablished, starting the http server")
+	slog.Info("root layer stablished, starting the http server")
 	// HTTP Server
 	presentation.StartHttpServer(cfg, gatewayService, authService)
 }
