@@ -21,7 +21,7 @@ func (repository *MutationRepository) QueryPixKey(mutation string, ctx context.C
 	ctxDb, cancel := context.WithTimeout(ctx, time.Second*1)
 	defer cancel()
 
-	const query = "SELECT pix_key FROM USERS WHERE $1"
+	const query = "SELECT pix_key FROM users WHERE pix_key = $1"
 
 	var entities []database.MutationEntity
 	rows, err := repository.Postgress.QueryContext(ctxDb, query, mutation)
