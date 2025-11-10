@@ -1,6 +1,7 @@
 package presentation
 
 import (
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -47,6 +48,8 @@ func AuthMiddleware(handler MutationHandler, authService application.AuthService
 		}
 
 		user := &domain.User{Id: claims.UserID}
+
+		slog.Info("user authenticated", slog.Group("user_credentials", slog.String("user_id", user.Id)))
 
 		handler(w, r, user)
 	})
